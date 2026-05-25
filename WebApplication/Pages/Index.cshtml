@@ -1,0 +1,86 @@
+﻿@page
+@using Elevator.WebApplication.Controllers
+@using Elevator.Core.Models.Requests
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<form id="simulationSummary" class="requestForm" asp-controller="Request" asp-action="@(nameof(RequestController.Ping))" method="get" asp-route-SimulationId="~setbyjs~">
+</form>
+
+<div class="text-center" id="simBody">
+    <h1 class="display-4">Welcome</h1>
+    <form id="createSim">
+        <label asp-for="Floors">
+            Number of Floors:<br />
+            <input id="floors" asp-for="Floors" type="number" />
+        </label><br /><br />
+        <label asp-for="Elevators">
+            Number of Elevators:<br />
+            <input id="elevators" asp-for="Elevators" type="number" />
+        </label><br /><br />
+        <label asp-for="Capacity">
+            Elevator Capacity:<br />
+            <input id="capacity" asp-for="Capacity" type="number" />
+        </label><br /><br />
+        <label asp-for="NumberOfPeople">
+            Number of people in building:<br />
+            <input id="people" asp-for="NumberOfPeople" type="number" />
+        </label><br /><br />
+        <label asp-for="Timeout">
+            Simulation Timeout in seconds:<br />
+            <input id="timeout" asp-for="Timeout" type="number"/>
+        </label><br /><br />
+
+        <a id="createSimulation" class="btn btn-info">Create Simulation</a>
+    </form>
+
+    <div id="interactionForms" style="display:none;">
+        @{
+            await CreateForm<AddFloorRequest>(nameof(RequestController.AddFloor));
+        }
+    </div>
+    
+    <div id="simulationResponse">
+
+    </div>
+</div>
+
+@{
+    async Task CreateForm<T>(string action) where T : BaseRequest
+    {
+        <form class="requestForm" id="@action" asp-controller="Request" asp-action="@action" method="post" asp-route-SimulationId="~setbyjs~">
+			@foreach (var property in typeof(T).GetProperties())
+			{
+                if (property.Name == nameof(BaseRequest.RequestTime))
+                {
+                    <input name="@property.Name" value="~setbyjs~" style="display:none;"/>
+                    continue;
+                }
+                string type = "text";
+
+                if (property.PropertyType == typeof(int))
+                {
+					type = "number";
+                }
+				else if (property.PropertyType == typeof(DateTime))
+                {
+					type = "datetime-local";
+                }
+				else if (property.PropertyType == typeof(bool))
+                {
+					type = "checkbox";
+                }
+                else
+                {
+                    continue;
+                }
+                <label asp-for="@property.Name">
+					@property.Name:<br />
+					<input name="@property.Name" type="@type" />
+				</label><br /><br />
+			}
+            <a data-form-id="@action" class="actionForm btn btn-info">@action</a>
+        </form>
+    }
+}
