@@ -2,6 +2,7 @@ Basic idea is to have a building exist on one thread which can spawn elevators o
 - Person: has a set of destination floors they want to go to 
 - Floors: contain idle people who have no destinations, and two queues for each direction.
 - Elevators: move between floors and will stop at assigned destinations, from building scheduler or from passenger.
+- Scheduler: Schedules elevator requests for floors when someone joins a queue on it.
 - BuildingManagerService: controls requests flow and allows requests to get run time metrics
 - SimulationManager: Simplifies interactions with the building, elevators, people.
 - SimulationCoordinator: coordinates multiple simulations.
