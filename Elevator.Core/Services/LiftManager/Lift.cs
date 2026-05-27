@@ -118,8 +118,11 @@ namespace Elevator.Core.Services.ElevatorService
                     CurrentFloor = nextFloor;
                 }
 
-                // Handle doors and passenger exchange
-                await HandleFloorAsync(cancellationToken);
+                if (_destinationFloors.TryRemove(CurrentFloor, out _))
+                {
+                    // Handle doors and passenger exchange
+                    await HandleFloorAsync(cancellationToken);
+                }
             }
 
             _isRunning = false;
